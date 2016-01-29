@@ -39,9 +39,9 @@ class ConfigureGrub(Task):
 		if info.manifest.system.get('grub_disable_pnin') is True:
 			# print "grub: disabling persistent network interface names"
 			sed_i(grub_def, '^GRUB_CMDLINE_LINUX_DEFAULT="quiet"',
-							'GRUB_CMDLINE_LINUX_DEFAULT="console=hvc0 net.ifnames=0 biosdevname=0"')
+							'GRUB_CMDLINE_LINUX_DEFAULT="net.ifnames=0 biosdevname=0"')
 			sed_i(grub_def, '^GRUB_CMDLINE_LINUX=""',
-							'GRUB_CMDLINE_LINUX="console=hvc0 net.ifnames=0 biosdevname=0"')
+							'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"')
 		else:
 			sed_i(grub_def, '^GRUB_CMDLINE_LINUX_DEFAULT="quiet"',
 							'GRUB_CMDLINE_LINUX_DEFAULT="console=hvc0"')
