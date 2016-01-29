@@ -26,11 +26,27 @@ class ConfigureGrub(Task):
 		from bootstrapvz.common.tools import sed_i
 		grub_def = os.path.join(info.root, 'etc/default/grub')
 		sed_i(grub_def, '^#GRUB_TERMINAL=console', 'GRUB_TERMINAL=console')
-		sed_i(grub_def, '^GRUB_CMDLINE_LINUX_DEFAULT="quiet"',
-		                'GRUB_CMDLINE_LINUX_DEFAULT="console=hvc0"')
-		sed_i(grub_def, '^GRUB_TIMEOUT=[0-9]+', 'GRUB_TIMEOUT=0\n'
-		                                        'GRUB_HIDDEN_TIMEOUT=0\n'
-		                                        'GRUB_HIDDEN_TIMEOUT_QUIET=true')
+		
+		# optionally, enable grub menu
+		if info.manifest.system.get('grub_enable_timeout') is True:
+			# print "grub: enabling menu"
+			sed_i(grub_def, '^GRUB_TIMEOUT=[0-9]+', 'GRUB_TIMEOUT=5')
+		else:
+			sed_i(grub_def, '^GRUB_TIMEOUT=[0-9]+', 'GRUB_TIMEOUT=0\n'
+													'GRUB_HIDDEN_TIMEOUT=0\n'
+													'GRUB_HIDDEN_TIMEOUT_QUIET=true')
+		# optionally, disable persistent network 
+		if info.manifest.system.get('grub_disable_pnin') is True:
+			# print "grub: disabling persistent network interface names"
+			sed_i(grub_def, '^GRUB_CMDLINE_LINUX_DEFAULT="quiet"',
+							'GRUB_CMDLINE_LINUX_DEFAULT="console=hvc0 net.ifnames=0 biosdevname=0"')
+			sed_i(grub_def, '^GRUB_CMDLINE_LINUX=""',
+							'GRUB_CMDLINE_LINUX="console=hvc0 net.ifnames=0 biosdevname=0"')
+		else:
+			sed_i(grub_def, '^GRUB_CMDLINE_LINUX_DEFAULT="quiet"',
+							'GRUB_CMDLINE_LINUX_DEFAULT="console=hvc0"')
+
+		# disable the recovery menu optins
 		sed_i(grub_def, '^#GRUB_DISABLE_RECOVERY="true"', 'GRUB_DISABLE_RECOVERY="true"')
 
 
@@ -62,9 +78,9 @@ class InstallGrub_1_99(Task):
 				if not isinstance(p_map, partitionmaps.none.NoPartitions):
 					for idx, partition in enumerate(info.volume.partition_map.partitions):
 						device_map.write('(hd0,{prefix}{idx}) {device_path}\n'
-						                 .format(device_path=partition.device_path,
-						                         prefix=partition_prefix,
-						                         idx=idx + 1))
+										 .format(device_path=partition.device_path,
+												 prefix=partition_prefix,
+												 idx=idx + 1))
 
 			# Install grub
 			log_check_call(['chroot', info.root, 'grub-install', device_path])

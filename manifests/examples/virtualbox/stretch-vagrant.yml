@@ -4,15 +4,16 @@ provider:
   name: virtualbox
   guest_additions: /usr/share/virtualbox/VBoxGuestAdditions.iso
 bootstrapper:
-  workspace: /target/jessie
+  workspace: /target/stretch
 system:
-  release: jessie
+  release: stretch
   architecture: amd64
   bootloader: grub
   charmap: UTF-8
   hostname: localhost
   locale: en_US
   timezone: UTC
+  grub_disable_pnin: true
 volume:
   backing: vmdk
   partitions:
