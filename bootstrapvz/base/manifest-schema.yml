@@ -45,14 +45,18 @@ properties:
         enum: [i386, amd64, arm64]
       userspace_architecture:
         enum: [i386]
-      grub_enable_timeout: {type: boolean}
-      grub_disable_pnin: {type: boolean}
       bootloader:
         enum:
         - pvgrub
         - grub
         - extlinux
         - none
+      grub:
+        type: object
+        properties:
+          enable_timeout: {type: integer}
+          disable_pnin: {type: boolean}
+        additionalProperties: false
       charmap: {type: string}
       hostname:
         type: string

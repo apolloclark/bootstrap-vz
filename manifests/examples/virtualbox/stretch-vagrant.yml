@@ -9,11 +9,13 @@ system:
   release: stretch
   architecture: amd64
   bootloader: grub
+  grub:
+    disable_pnin: true
+    enable_timeout: 5
   charmap: UTF-8
   hostname: localhost
   locale: en_US
   timezone: UTC
-  grub_disable_pnin: true
 volume:
   backing: vmdk
   partitions:

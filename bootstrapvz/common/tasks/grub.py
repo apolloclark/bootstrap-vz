@@ -25,26 +25,59 @@ class ConfigureGrub(Task):
 	def run(cls, info):
 		from bootstrapvz.common.tools import sed_i
 		grub_def = os.path.join(info.root, 'etc/default/grub')
+
+		print dir(info.manifest.system)
+		print info.manifest.system
+		print dir(info.manifest.system['grub'])
+		print info.manifest.system['grub']
+
+		# disable the graphical grub menu
 		sed_i(grub_def, '^#GRUB_TERMINAL=console', 'GRUB_TERMINAL=console')
-		
-		# optionally, enable grub menu
-		if info.manifest.system.get('grub_enable_timeout') is True:
-			# print "grub: enabling menu"
-			sed_i(grub_def, '^GRUB_TIMEOUT=[0-9]+', 'GRUB_TIMEOUT=5')
+
+		# optional grub settings
+		if 'grub' in info.manifest.system:
+			grub_settings = info.manifest.system['grub']
+
+			# enable grub menu
+			if grub_settings.get('enable_timeout') > 0:
+				print "grub: enabling timeout"
+				sed_i(
+					grub_def,
+					'^GRUB_TIMEOUT=[0-9]+',
+					'GRUB_TIMEOUT=' + str(grub_settings.get('enable_timeout'))
+				)
+			else:
+				sed_i(
+					grub_def,
+					'^GRUB_TIMEOUT=[0-9]+',
+					'GRUB_TIMEOUT=0\n'
+					'GRUB_HIDDEN_TIMEOUT=0\n'
+					'GRUB_HIDDEN_TIMEOUT_QUIET=true'
+				)
+
+			# disable persistent network interface names
+			if grub_settings.get('disable_pnin') is True:
+				print "grub: disabling pnin"
+				sed_i(
+					grub_def,
+					'^GRUB_CMDLINE_LINUX=""',
+					'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"'
+				)
 		else:
-			sed_i(grub_def, '^GRUB_TIMEOUT=[0-9]+', 'GRUB_TIMEOUT=0\n'
-													'GRUB_HIDDEN_TIMEOUT=0\n'
-													'GRUB_HIDDEN_TIMEOUT_QUIET=true')
-		# optionally, disable persistent network 
-		if info.manifest.system.get('grub_disable_pnin') is True:
-			# print "grub: disabling persistent network interface names"
-			sed_i(grub_def, '^GRUB_CMDLINE_LINUX_DEFAULT="quiet"',
-							'GRUB_CMDLINE_LINUX_DEFAULT="net.ifnames=0 biosdevname=0"')
-			sed_i(grub_def, '^GRUB_CMDLINE_LINUX=""',
-							'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"')
-		else:
-			sed_i(grub_def, '^GRUB_CMDLINE_LINUX_DEFAULT="quiet"',
-							'GRUB_CMDLINE_LINUX_DEFAULT="console=hvc0"')
+			sed_i(
+				grub_def,
+				'^GRUB_TIMEOUT=[0-9]+',
+				'GRUB_TIMEOUT=0\n'
+				'GRUB_HIDDEN_TIMEOUT=0\n'
+				'GRUB_HIDDEN_TIMEOUT_QUIET=true'
+			)
+
+		# quiet the console
+		sed_i(
+			grub_def,
+			'^GRUB_CMDLINE_LINUX_DEFAULT="quiet"',
+			'GRUB_CMDLINE_LINUX_DEFAULT="console=hvc0 console=ttyS0"'
+		)
 
 		# disable the recovery menu optins
 		sed_i(grub_def, '^#GRUB_DISABLE_RECOVERY="true"', 'GRUB_DISABLE_RECOVERY="true"')
@@ -77,10 +110,14 @@ class InstallGrub_1_99(Task):
 				device_map.write('(hd0) {device_path}\n'.format(device_path=device_path))
 				if not isinstance(p_map, partitionmaps.none.NoPartitions):
 					for idx, partition in enumerate(info.volume.partition_map.partitions):
-						device_map.write('(hd0,{prefix}{idx}) {device_path}\n'
-										 .format(device_path=partition.device_path,
-												 prefix=partition_prefix,
-												 idx=idx + 1))
+						device_map.write(
+							'(hd0,{prefix}{idx}) {device_path}\n'
+							.format(
+								device_path=partition.device_path,
+								prefix=partition_prefix,
+								idx=idx + 1
+							)
+						)
 
 			# Install grub
 			log_check_call(['chroot', info.root, 'grub-install', device_path])
