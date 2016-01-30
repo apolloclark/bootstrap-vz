@@ -30,32 +30,17 @@ class ConfigureGrub(Task):
 		sed_i(grub_def, '^#GRUB_TERMINAL=console', 'GRUB_TERMINAL=console')
 
 		# optional grub settings
+		grub_settings = {}
 		if 'grub' in info.manifest.system:
 			grub_settings = info.manifest.system['grub']
 
-			# enable grub menu
-			if grub_settings.get('enable_timeout') > 0:
-				sed_i(
-					grub_def,
-					'^GRUB_TIMEOUT=[0-9]+',
-					'GRUB_TIMEOUT=' + str(grub_settings.get('enable_timeout'))
-				)
-			else:
-				sed_i(
-					grub_def,
-					'^GRUB_TIMEOUT=[0-9]+',
-					'GRUB_TIMEOUT=0\n'
-					'GRUB_HIDDEN_TIMEOUT=0\n'
-					'GRUB_HIDDEN_TIMEOUT_QUIET=true'
-				)
-
-			# disable persistent network interface names
-			if grub_settings.get('disable_pnin') is True:
-				sed_i(
-					grub_def,
-					'^GRUB_CMDLINE_LINUX=""',
-					'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"'
-				)
+		# enable grub menu
+		if int(grub_settings.get('enable_timeout')) > 0:
+			sed_i(
+				grub_def,
+				'^GRUB_TIMEOUT=[0-9]+',
+				'GRUB_TIMEOUT=' + str(grub_settings.get('enable_timeout'))
+			)
 		else:
 			sed_i(
 				grub_def,
@@ -63,6 +48,14 @@ class ConfigureGrub(Task):
 				'GRUB_TIMEOUT=0\n'
 				'GRUB_HIDDEN_TIMEOUT=0\n'
 				'GRUB_HIDDEN_TIMEOUT_QUIET=true'
+			)
+
+		# disable persistent network interface names
+		if grub_settings.get('disable_pnin') is True:
+			sed_i(
+				grub_def,
+				'^GRUB_CMDLINE_LINUX=""',
+				'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"'
 			)
 
 		# quiet the console
