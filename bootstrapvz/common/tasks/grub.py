@@ -26,11 +26,6 @@ class ConfigureGrub(Task):
 		from bootstrapvz.common.tools import sed_i
 		grub_def = os.path.join(info.root, 'etc/default/grub')
 
-		print dir(info.manifest.system)
-		print info.manifest.system
-		print dir(info.manifest.system['grub'])
-		print info.manifest.system['grub']
-
 		# disable the graphical grub menu
 		sed_i(grub_def, '^#GRUB_TERMINAL=console', 'GRUB_TERMINAL=console')
 
@@ -40,7 +35,6 @@ class ConfigureGrub(Task):
 
 			# enable grub menu
 			if grub_settings.get('enable_timeout') > 0:
-				print "grub: enabling timeout"
 				sed_i(
 					grub_def,
 					'^GRUB_TIMEOUT=[0-9]+',
@@ -57,7 +51,6 @@ class ConfigureGrub(Task):
 
 			# disable persistent network interface names
 			if grub_settings.get('disable_pnin') is True:
-				print "grub: disabling pnin"
 				sed_i(
 					grub_def,
 					'^GRUB_CMDLINE_LINUX=""',
