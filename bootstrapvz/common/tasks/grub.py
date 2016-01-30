@@ -68,6 +68,9 @@ class ConfigureGrub(Task):
 		# disable the recovery menu optins
 		sed_i(grub_def, '^#GRUB_DISABLE_RECOVERY="true"', 'GRUB_DISABLE_RECOVERY="true"')
 
+		# commit the updates
+		log_check_call(['chroot', info.root, 'update-grub'])
+
 
 class InstallGrub_1_99(Task):
 	description = 'Installing grub 1.99'
@@ -125,4 +128,3 @@ class InstallGrub_2(Task):
 	@classmethod
 	def run(cls, info):
 		log_check_call(['chroot', info.root, 'grub-install', info.volume.device_path])
-		log_check_call(['chroot', info.root, 'update-grub'])
