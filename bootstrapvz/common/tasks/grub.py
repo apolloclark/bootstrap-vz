@@ -35,7 +35,7 @@ class ConfigureGrub(Task):
 			grub_settings = info.manifest.system['grub']
 
 		# enable grub menu
-		if int(grub_settings.get('enable_timeout')) > 0:
+		if grub_settings.get('enable_timeout') > 0:
 			sed_i(
 				grub_def,
 				'^GRUB_TIMEOUT=[0-9]+',
