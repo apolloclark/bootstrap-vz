@@ -58,7 +58,7 @@ class ConfigureGrub(Task):
 				'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"'
 			)
 
-		# quiet the console
+		# configure the console
 		sed_i(
 			grub_def,
 			'^GRUB_CMDLINE_LINUX_DEFAULT="quiet"',
@@ -99,14 +99,10 @@ class InstallGrub_1_99(Task):
 				device_map.write('(hd0) {device_path}\n'.format(device_path=device_path))
 				if not isinstance(p_map, partitionmaps.none.NoPartitions):
 					for idx, partition in enumerate(info.volume.partition_map.partitions):
-						device_map.write(
-							'(hd0,{prefix}{idx}) {device_path}\n'
-							.format(
-								device_path=partition.device_path,
-								prefix=partition_prefix,
-								idx=idx + 1
-							)
-						)
+						device_map.write('(hd0,{prefix}{idx}) {device_path}\n'
+						                 .format(device_path=partition.device_path,
+						                         prefix=partition_prefix,
+						                         idx=idx + 1))
 
 			# Install grub
 			log_check_call(['chroot', info.root, 'grub-install', device_path])

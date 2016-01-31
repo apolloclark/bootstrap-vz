@@ -4,7 +4,7 @@ provider:
   name: virtualbox
   guest_additions: /usr/share/virtualbox/VBoxGuestAdditions.iso
 bootstrapper:
-  workspace: /target/stretch
+  workspace: /target
 system:
   release: stretch
   architecture: amd64

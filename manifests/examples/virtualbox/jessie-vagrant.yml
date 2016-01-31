@@ -4,7 +4,7 @@ provider:
   name: virtualbox
   guest_additions: /usr/share/virtualbox/VBoxGuestAdditions.iso
 bootstrapper:
-  workspace: /target/jessie
+  workspace: /target
 system:
   release: jessie
   architecture: amd64
