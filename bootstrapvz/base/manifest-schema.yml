@@ -55,7 +55,6 @@ properties:
         type: object
         properties:
           enable_timeout: {type: integer}
-          disable_pnin: {type: boolean}
         additionalProperties: false
       charmap: {type: string}
       hostname:

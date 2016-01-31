@@ -10,7 +10,6 @@ system:
   architecture: amd64
   bootloader: grub
   grub:
-    disable_pnin: true
     enable_timeout: 5
   charmap: UTF-8
   hostname: localhost

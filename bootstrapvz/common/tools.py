@@ -118,30 +118,30 @@ def config_get(path, config_path):
 	"""
 	config = load_data(path)
 
+	# ensure we have a path to search for
+	if config_path is None:
+		raise Exception(
+			"Error: empty pathway defined for searching, in the file '" +
+			path + "', please define it."
+		)
+
 	# iterate over a linear list of strings
 	for key in config_path:
-
-		# ensure we have a valid key to search for
-		if key is None:
-			raise Exception(
-				"Error: empty key searched for '" + str(key) +
-				"', in the file '" + path + "', try adding it."
-			)
 
 		# attempt to retrieve the string
 		try:
 			config = config.get(key)
 		except AttributeError:
 			raise Exception(
-				"Error: cannot find the key '" + str(key) +
-				"', in the file '" + path + "', try adding it."
+			    "Error: cannot find the key '" + str(key) +
+			    "', in the file '" + path + "', try adding it."
 			)
 
 		# ensure we have a value to pass back
 		if config is None:
 			raise Exception(
-				"Error: the key '" + str(key) + " in the file '" + path +
-				"' is empty, try defining it."
+			    "Error: the key '" + str(key) + " in the file '" + path +
+			    "' is empty, try defining it."
 			)
 
 	return config

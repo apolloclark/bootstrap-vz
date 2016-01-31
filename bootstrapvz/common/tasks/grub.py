@@ -36,36 +36,37 @@ class ConfigureGrub(Task):
 
 		# configure the console
 		sed_i(
-			grub_def,
-			'^GRUB_CMDLINE_LINUX_DEFAULT="quiet"',
-			'GRUB_CMDLINE_LINUX_DEFAULT="console=hvc0 console=ttyS0"'
+		    grub_def,
+		    '^GRUB_CMDLINE_LINUX_DEFAULT="quiet"',
+		    'GRUB_CMDLINE_LINUX_DEFAULT="console=hvc0 console=ttyS0"'
 		)
 
 		# disable persistent network interface names
-		if grub_settings.get('disable_pnin') is True:
+		from bootstrapvz.common.releases import jessie
+		if info.manifest.release > jessie:
 			sed_i(
-				grub_def,
-				'^GRUB_CMDLINE_LINUX=""',
-				'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"'
+			    grub_def,
+			    '^GRUB_CMDLINE_LINUX=""',
+			    'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"'
 			)
 
-		# enable grub menu
+		# configure the grub menu timeout
 		if grub_settings.get('enable_timeout') > 0:
 			sed_i(
-				grub_def,
-				'^GRUB_TIMEOUT=[0-9]+',
-				'GRUB_TIMEOUT=' + str(grub_settings.get('enable_timeout'))
+			    grub_def,
+			    '^GRUB_TIMEOUT=[0-9]+',
+			    'GRUB_TIMEOUT=' + str(grub_settings.get('enable_timeout'))
 			)
 		else:
 			sed_i(
-				grub_def,
-				'^GRUB_TIMEOUT=[0-9]+',
-				'GRUB_TIMEOUT=0\n'
-				'GRUB_HIDDEN_TIMEOUT=0\n'
-				'GRUB_HIDDEN_TIMEOUT_QUIET=true'
+			    grub_def,
+			    '^GRUB_TIMEOUT=[0-9]+',
+			    'GRUB_TIMEOUT=0\n'
+			    'GRUB_HIDDEN_TIMEOUT=0\n'
+			    'GRUB_HIDDEN_TIMEOUT_QUIET=true'
 			)
 
-		# disable the recovery menu optins
+		# disable the recovery menu options
 		sed_i(grub_def, '^#GRUB_DISABLE_RECOVERY="true"', 'GRUB_DISABLE_RECOVERY="true"')
 
 		# commit the updates
