@@ -26,13 +26,28 @@ class ConfigureGrub(Task):
 		from bootstrapvz.common.tools import sed_i
 		grub_def = os.path.join(info.root, 'etc/default/grub')
 
-		# disable the graphical grub menu
-		sed_i(grub_def, '^#GRUB_TERMINAL=console', 'GRUB_TERMINAL=console')
-
 		# optional grub settings
 		grub_settings = {}
 		if 'grub' in info.manifest.system:
 			grub_settings = info.manifest.system['grub']
+
+		# disable the graphical grub menu
+		sed_i(grub_def, '^#GRUB_TERMINAL=console', 'GRUB_TERMINAL=console')
+
+		# configure the console
+		sed_i(
+			grub_def,
+			'^GRUB_CMDLINE_LINUX_DEFAULT="quiet"',
+			'GRUB_CMDLINE_LINUX_DEFAULT="console=hvc0 console=ttyS0"'
+		)
+
+		# disable persistent network interface names
+		if grub_settings.get('disable_pnin') is True:
+			sed_i(
+				grub_def,
+				'^GRUB_CMDLINE_LINUX=""',
+				'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"'
+			)
 
 		# enable grub menu
 		if grub_settings.get('enable_timeout') > 0:
@@ -49,21 +64,6 @@ class ConfigureGrub(Task):
 				'GRUB_HIDDEN_TIMEOUT=0\n'
 				'GRUB_HIDDEN_TIMEOUT_QUIET=true'
 			)
-
-		# disable persistent network interface names
-		if grub_settings.get('disable_pnin') is True:
-			sed_i(
-				grub_def,
-				'^GRUB_CMDLINE_LINUX=""',
-				'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"'
-			)
-
-		# configure the console
-		sed_i(
-			grub_def,
-			'^GRUB_CMDLINE_LINUX_DEFAULT="quiet"',
-			'GRUB_CMDLINE_LINUX_DEFAULT="console=hvc0 console=ttyS0"'
-		)
 
 		# disable the recovery menu optins
 		sed_i(grub_def, '^#GRUB_DISABLE_RECOVERY="true"', 'GRUB_DISABLE_RECOVERY="true"')
