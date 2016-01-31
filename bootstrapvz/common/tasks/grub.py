@@ -42,8 +42,8 @@ class ConfigureGrub(Task):
 		)
 
 		# disable persistent network interface names
-		from bootstrapvz.common.releases import jessie
-		if info.manifest.release > jessie:
+		from bootstrapvz.common.releases import stretch
+		if info.manifest.release >= stretch:
 			sed_i(
 			    grub_def,
 			    '^GRUB_CMDLINE_LINUX=""',
