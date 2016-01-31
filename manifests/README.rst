@@ -142,7 +142,6 @@ system and does not fit under any other section.
    ``optional``
    Optional settings:
    -  ``enable_timeout``: int, time in seconds to show the grub menu
-   -  ``disable_pnin``: boolean, disable "Persistent Network Intefaces Names"
 -  ``charmap``: The default charmap of the system.
    Valid values: Any valid charmap like ``UTF-8``, ``ISO-8859-`` or
    ``GBK``.
@@ -171,7 +170,6 @@ Example:
       bootloader: extlinux
       grub:
         enable_timeout: 5
-        disable_pnin: true
       charmap: UTF-8
       hostname: jessie x86_64
       locale: en_US
