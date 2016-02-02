@@ -14,3 +14,6 @@
 /.tox/
 /build-servers.yml
 /integration.html
+# Eclipse PyDev
+.project
+.pydevproject

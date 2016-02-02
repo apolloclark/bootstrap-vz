@@ -12,6 +12,7 @@ properties:
         - wheezy
         - stable
         - jessie
+        - stretch
         - testing
         - sid
         - unstable

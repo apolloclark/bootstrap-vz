@@ -48,8 +48,8 @@ class InstallNetworkingUDevHotplugAndDHCPSubinterface(Task):
 
 		import stat
 		rwxr_xr_x = (stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |
-		             stat.S_IRGRP                | stat.S_IXGRP |
-		             stat.S_IROTH                | stat.S_IXOTH)
+		             stat.S_IRGRP | stat.S_IXGRP |
+		             stat.S_IROTH | stat.S_IXOTH)
 
 		from shutil import copy
 		copy(os.path.join(script_src, '53-ec2-network-interfaces.rules'),
@@ -87,7 +87,7 @@ class InstallEnhancedNetworking(Task):
 
 	@classmethod
 	def run(cls, info):
-		version = '2.16.1'
+		version = '3.1.2'
 		drivers_url = 'http://downloads.sourceforge.net/project/e1000/ixgbevf stable/%s/ixgbevf-%s.tar.gz' % (version, version)
 		archive = os.path.join(info.root, 'tmp', 'ixgbevf-%s.tar.gz' % (version))
 		module_path = os.path.join(info.root, 'usr', 'src', 'ixgbevf-%s' % (version))
